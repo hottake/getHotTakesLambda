@@ -4,7 +4,8 @@
   "description": "A Lambda Function to Get Hot Takes",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "NODE_ENV=dev node index.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,7 @@
   },
   "homepage": "https://github.com/hottake/getHotTakesLambda#readme",
   "dependencies": {
+    "dotenv": "^4.0.0",
     "twit": "^2.2.9"
   }
 }
