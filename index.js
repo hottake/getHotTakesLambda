@@ -20,13 +20,19 @@ exports.handler = (event, context, callback) => {
     // console.log('value3 =', event.key3);
 
     /// https://dev.twitter.com/rest/reference/get/search/tweets
+
+    let yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1); 
+
     let searchParams = {
-      q: '',
+      q: `hottake  since:${yesterday.getYear()-yesterday.getMonth()-yesterday.getDate()}`,
       lang: 'en',
-      result_type: 'popular',
-      count: 100,
+      count: 100
     }
-    console.log(T)
+
+    T.get('search/tweets', searchParams, function(err, data, response) {
+      console.log(data.statuses.length)
+    })
     
     // callback(null, event.key1);  // Echo back the first key value
     //callback('Something went wrong');
