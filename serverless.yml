@@ -1,0 +1,33 @@
+service: hottakes
+
+provider:
+  name: aws
+
+functions:
+  getTodaysHottakes:
+    events: 
+      - http: get hottakes/new
+  voteUp:
+    events:
+      - http: put hottake/vote/up/{id}
+  voteDown:
+    events:
+      - http: put hottake/vote/down/{id}
+  deleteTake:
+    events:
+      - http: delete hottake/{id}
+resources:
+  Resources:
+    hottakesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: hottakes
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
