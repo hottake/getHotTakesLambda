@@ -1,8 +1,10 @@
 'use strict';
 if(process.env.NODE_ENV === 'dev') require('dotenv').config();
 
-const Twit = require('twit');
-const TweetModel = require('./tweetModel');
+const Twit = require('twit'),
+      TweetModel = require('./tweetModel'),
+      AWS = require('aws-sdk'),
+      dynamo = new AWS.DynamoDB.DocumentClient();
 
 module.exports.hello = (event, context, callback) => {
   const response = {

@@ -128,7 +128,7 @@ functions:
 #resources:
 resources:  // CloudFormation template syntax
   Resources:
-    usersTable:
+    hottakesTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: hottakeTable
