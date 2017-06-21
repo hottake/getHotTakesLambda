@@ -6,21 +6,6 @@ const Twit = require('twit'),
       Dynamo = new AWS.DynamoDB.DocumentClient(),
       uuidv1 =require('uuid/v1');
 
-module.exports.hello = (event, context, callback) => {
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: 'Go Serverless v1.0! Your function executed successfully!',
-      input: event,
-    }),
-  };
-
-  callback(null, response);
-
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // callback(null, { message: 'Go Serverless v1.0! Your function executed successfully!', event });
-};
-
 module.exports.getTwitterHottakes = (event, context, callback) => {
 
    let t = new Twit({
@@ -42,7 +27,7 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
     include_rts: false
   }
 
-  t.get('search/tweets', searchParams, (err, data, response) => {
+  t.get('search/tweets', searchParams, (err, data, callback) => {
       let batchWriteDynamo = data.statuses.map( data => {
         let { created_at, id, text, user } = data,
         uuid = uuidv1();
@@ -83,8 +68,7 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
              }
            }
         }
-      }),
-      response = {};
+      }), response = {};
 
       Dynamo.BatchWriteItem({ RequestItems: { "HottakesTable": batchWriteDynamo } }, (err, data) => {
         if(err){
