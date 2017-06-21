@@ -43,8 +43,6 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
   }
 
   t.get('search/tweets', searchParams, (err, data, response) => {
-    if(data.statuses.length)
-    {
       let batchWriteDynamo = data.statuses.map( data => {
         let { created_at, id, text, user } = data,
         uuid = uuidv1();
@@ -85,12 +83,19 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
              }
            }
         }
-      });
+      }),
+      response = {};
+
       Dynamo.BatchWriteItem({ RequestItems: { "HottakesTable": batchWriteDynamo } }, (err, data) => {
-        callback(err, data)
+        if(err){
+          callback(new Error('[400] Bad Request'))
+        } 
+        else{
+          response.statusCode = 200
+          response.body = { message: `Successfuly added takes to db`}
+          callback(null, response)
+        }
       })
-    }
-    callback()
   })
 }
 
@@ -113,9 +118,18 @@ module.exports.voteUp = (event, context, callback) => {
       }
     },
     UpdateExpression: "ADD #S :a, #U :a"
-  };
+  },
+  response = {};
+
   Dynamo.updateItem(params, (err, data) => {
-      callback(err,data)
+    if(err){
+      callback(new Error('[400] Bad Request'))
+    }
+    else{
+      response.statusCode = 200
+      response.body = { message: `Successfuly upvoted item ${uuid}`}
+      callback(null, response)
+    }
   })
 };
 
@@ -138,9 +152,18 @@ module.exports.voteDown = (event, context, callback) => {
       }
     },
     UpdateExpression: "ADD #S :m, #D :m"
-  };
+  },
+  response = {};
+
   Dynamo.updateItem(params, (err, data) => {
-      callback(err,data)
+    if(err){
+      callback(new Error('[400] Bad Request'))
+    }
+    else{
+      response.statusCode = 200
+      response.body = { message: `Successfuly downvoted item ${uuid}`}
+      callback(null, response)
+    }
   })
 };
 
@@ -149,6 +172,3 @@ module.exports.deleteTake = (event, context, callback) => {};
 module.exports.submitTake = (event, context, callback) => {};
 
 module.exports.getRandomTake = (event, context, callback) => {};
-
-
-
