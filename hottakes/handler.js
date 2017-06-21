@@ -50,10 +50,9 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
           created_at,
           id,
           text,
-          userId: user.id,
+          user_id: user.id,
           name: user.screen_name,
-          location: user.location,
-          type: 'twitter',
+          origin: 'twitter',
         }
       });
       callback(statuses); 
