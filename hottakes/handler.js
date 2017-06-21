@@ -52,7 +52,7 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
         return {
            PutRequest: {
              Item: {
-               "UUID": {
+               "uuid": {
                 S: uuid
                },
                "origin_id": {

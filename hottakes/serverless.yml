@@ -71,6 +71,8 @@ resources:  // CloudFormation template syntax
         AttributeDefinitions:
           - AttributeName: origin_id
             AttributeType: S
+          - AttributeName: uuid
+            AttributeType: S
           - AttributeName: score
             AttributeType: N
           - AttributeName: created_at
@@ -90,6 +92,8 @@ resources:  // CloudFormation template syntax
         KeySchema:
           - AttributeName: origin_id
             KeyType: HASH
+          - AttributeName: uuid
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
