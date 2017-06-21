@@ -38,7 +38,7 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
   searchParams = {
     q: `hottake -filter:retweets  since:${yesterday.getYear()-yesterday.getMonth()-yesterday.getDate()}`,
     lang: 'en',
-    count: 100,
+    count: 25,
     include_rts: false
   }
 
@@ -74,20 +74,18 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
                  S: 'twitter'
                },
                "score": {
-                 N: 0
+                 N: "0"
                },
                "ups": {
-                 N: 0
+                 N: "0"
                },
                "downs": {
-                 N: 0
+                 N: "0"
                }
              }
            }
         }
       });
-
-
       Dynamo.BatchWriteItem({ RequestItems: { "HottakesTable": batchWriteDynamo } }, (err, data) => {
         callback(err, data)
       })
@@ -96,9 +94,55 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
   })
 }
 
-module.exports.voteUp = (event, context, callback) => {};
+module.exports.voteUp = (event, context, callback) => {
+  const uuid = event.path.id,
+  params = {
+    ExpressionAttributeNames: {
+      "#S": "score", 
+      "#U": "ups"
+    },
+    ExpressionAttributeValues: {
+      ":a": {
+        N: "1"
+      }
+    },
+    TableName: "HottakesTable",
+    Key: {
+      "uuid": {
+        S: uuid
+      }
+    },
+    UpdateExpression: "ADD #S :a, #U :a"
+  };
+  Dynamo.updateItem(params, (err, data) => {
+      callback(err,data)
+  })
+};
 
-module.exports.voteDown = (event, context, callback) => {};
+module.exports.voteDown = (event, context, callback) => {
+  const uuid = event.path.id,
+  params = {
+    ExpressionAttributeNames: {
+      "#S": "score", 
+      "#D": "downs"
+    },
+    ExpressionAttributeValues: {
+      ":m": {
+        N: "-1"
+      }
+    },
+    TableName: "HottakesTable",
+    Key: {
+      "uuid": {
+        S: uuid
+      }
+    },
+    UpdateExpression: "ADD #S :m, #D :m"
+  };
+  Dynamo.updateItem(params, (err, data) => {
+      callback(err,data)
+  })
+};
 
 module.exports.deleteTake = (event, context, callback) => {};
 

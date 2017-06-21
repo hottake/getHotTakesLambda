@@ -32,22 +32,42 @@ functions:
     handler: handler.getTwitterHottakes
     description: Polls for daily hottakes from twitter
     events: 
-      - http: get hottakes/new
+      - http:
+          path: hottake/spicy/{id}
+          method: get
   voteUp:
     handler: handler.voteUp
     description: Conducts an upvote on a specific hottake
     events:
-      - http: put hottake/spicy/{id}
+      - http:
+          path: hottake/spicy/{id}
+          method: put
+          request: 
+            parameters: 
+               paths: 
+                 id: true
   voteDown:
     handler: handler.voteDown
     description: Conducts a downvote on a specific hottake
     events:
-      - http: put hottake/chilly/{id}
+      - http:
+          path: hottake/spicy/{id}
+          method: put
+          request: 
+            parameters: 
+               paths: 
+                 id: true
   deleteTake:
     handler: handler.deleteTake
     description: deletes a hottake by id
     events:
-      - http: delete hottake/{id}
+      - http:
+          path: hottake/spicy/{id}
+          method: delete
+          request: 
+            parameters: 
+              paths: 
+                id: true
   getRandomTake:
     handler: handler.getRandomTake
     description: gets a random hottake from dynamodb:hottakeTable
