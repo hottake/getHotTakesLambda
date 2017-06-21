@@ -83,8 +83,6 @@ resources:  // CloudFormation template syntax
             AttributeType: S
           - AttributeName: text
             AttributeType: S
-          - AttributeName: origin
-            AttributeType: S
           - AttributeName: name
             AttributeType: S
           - AttributeName: user_id
@@ -92,8 +90,6 @@ resources:  // CloudFormation template syntax
         KeySchema:
           - AttributeName: origin_id
             KeyType: HASH
-          - AttributeName: score
-            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

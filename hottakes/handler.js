@@ -4,7 +4,7 @@ if(process.env.NODE_ENV === 'dev') require('dotenv').config();
 const Twit = require('twit'),
       TweetModel = require('./tweetModel'),
       AWS = require('aws-sdk'),
-      dynamo = new AWS.DynamoDB.DocumentClient();
+      Dynamo = new AWS.DynamoDB.DocumentClient();
 
 module.exports.hello = (event, context, callback) => {
   const response = {
@@ -45,21 +45,50 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
   t.get('search/tweets', searchParams, (err, data, response) => {
     if(data.statuses.length)
     {
-      let statuses = data.statuses.map( data => {
+      let batchWriteDynamo = data.statuses.map( data => {
         let { created_at, id, text, user } = data;
 
         return {
-          created_at,
-          id,
-          text,
-          user_id: user.id,
-          name: user.screen_name,
-          origin: 'twitter',
+           PutRequest: {
+             Item: {
+               "origin_id": {
+                 S: id
+               }, 
+               "created_at": {
+                 S: created_at
+               }, 
+               "user_id": {
+                 S: user.id
+               },
+               "name": {
+                 S: user.screen_name
+               },
+               "text": {
+                 S: text
+               },
+               "origin": {
+                 S: 'twitter'
+               },
+               "score": {
+                 N: 0
+               },
+               "ups": {
+                 N: 0
+               },
+               "downs": {
+                 N: 0
+               }
+             }
+           }
         }
       });
-      callback(statuses); 
+
+
+      Dynamo.BatchWriteItem({ RequestItems: { "HottakesTable": batchWriteDynamo } (err, data) => {
+        callback(err, data)
+      })
     }
-    callback([])
+    callback()
   })
 }
 
