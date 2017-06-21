@@ -2,9 +2,9 @@
 if(process.env.NODE_ENV === 'dev') require('dotenv').config();
 
 const Twit = require('twit'),
-      TweetModel = require('./tweetModel'),
       AWS = require('aws-sdk'),
-      Dynamo = new AWS.DynamoDB.DocumentClient();
+      Dynamo = new AWS.DynamoDB.DocumentClient(),
+      uuidv1 =require('uuid/v1');
 
 module.exports.hello = (event, context, callback) => {
   const response = {
@@ -46,11 +46,15 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
     if(data.statuses.length)
     {
       let batchWriteDynamo = data.statuses.map( data => {
-        let { created_at, id, text, user } = data;
+        let { created_at, id, text, user } = data,
+        uuid = uuidv1();
 
         return {
            PutRequest: {
              Item: {
+               "UUID": {
+                S: uuid
+               },
                "origin_id": {
                  S: id
                }, 
@@ -84,7 +88,7 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
       });
 
 
-      Dynamo.BatchWriteItem({ RequestItems: { "HottakesTable": batchWriteDynamo } (err, data) => {
+      Dynamo.BatchWriteItem({ RequestItems: { "HottakesTable": batchWriteDynamo } }, (err, data) => {
         callback(err, data)
       })
     }
@@ -98,9 +102,9 @@ module.exports.voteDown = (event, context, callback) => {};
 
 module.exports.deleteTake = (event, context, callback) => {};
 
-modue.exports.submitTake = (event, context, callback) => {};
+module.exports.submitTake = (event, context, callback) => {};
 
-modue.exports.getRandomTake = (event, context, callback) => {};
+module.exports.getRandomTake = (event, context, callback) => {};
 
 
 
