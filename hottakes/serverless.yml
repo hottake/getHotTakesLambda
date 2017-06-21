@@ -27,10 +27,22 @@ provider:
 #  exclude:
 #    - exclude-me.js
 #    - exclude-me-dir/**
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+  include:
+    - hotakes/handler.js
+    - node_modules/uuid/**
+
 functions:
   getTwitterHottakes:
     handler: handler.getTwitterHottakes
+    package:
     description: Polls for daily hottakes from twitter
+    package:     
+      include:
+        - node_modules/twit/**
     events: 
       - http:
           path: hottake/spicy/{id}
