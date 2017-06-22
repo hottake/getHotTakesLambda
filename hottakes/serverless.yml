@@ -18,21 +18,24 @@ provider:
 package:
   individually: true
   exclude:
-    - node_modules/**
-  include:
-    - hotakes/handler.js
-    - node_modules/uuid/**
+    - ../node_modules/**
+    - '!../node_modules/uuid/**'
 functions:
   getTwitterHottakes:
     handler: handler.getTwitterHottakes
     description: Polls for daily hottakes from twitter
     package:
       include:
-        - node_modules/twit/**
+        - ../node_modules/**
     events: 
       - http:
           path: hottake/new
           method: get
+    enviorment:
+      access_token: ${file(./serverless.env.yml):${opt:stage}.access_token}
+      consumer_key: ${file(./serverless.env.yml):${opt:stage}.consumer_key}
+      consumer_secret: ${file(./serverless.env.yml):${opt:stage}.consumer_secret}
+      access_token_secret: ${file(./serverless.env.yml):${opt:stage}.access_token_secret}
   voteUp:
     handler: handler.voteUp
     description: Conducts an upvote on a specific hottake

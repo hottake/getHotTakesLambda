@@ -1,13 +1,8 @@
 'use strict';
 if(process.env.NODE_ENV === 'dev') require('dotenv').config();
 
-const Twit = require('twit'),
-      AWS = require('aws-sdk'),
-      Dynamo = new AWS.DynamoDB.DocumentClient(),
-      uuidv1 =require('uuid/v1');
-
 module.exports.getTwitterHottakes = (event, context, callback) => {
-
+   const Twit = require('twit');
    let t = new Twit({
     consumer_key:         process.env.consumer_key,
     consumer_secret:      process.env.consumer_secret,
