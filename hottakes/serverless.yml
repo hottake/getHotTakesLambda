@@ -25,14 +25,13 @@ package:
 functions:
   getTwitterHottakes:
     handler: handler.getTwitterHottakes
-    package:
     description: Polls for daily hottakes from twitter
-    package:     
+    package:
       include:
         - node_modules/twit/**
     events: 
       - http:
-          path: hottake/spicy/{id}
+          path: hottake/new
           method: get
   voteUp:
     handler: handler.voteUp
@@ -43,25 +42,25 @@ functions:
           method: put
           request: 
             parameters: 
-               paths: 
-                 id: true
+              paths: 
+                id: true
   voteDown:
     handler: handler.voteDown
     description: Conducts a downvote on a specific hottake
     events:
       - http:
-          path: hottake/spicy/{id}
+          path: hottake/chilly/{id}
           method: put
           request: 
             parameters: 
-               paths: 
-                 id: true
+              paths: 
+                id: true
   deleteTake:
     handler: handler.deleteTake
     description: deletes a hottake by id
     events:
       - http:
-          path: hottake/spicy/{id}
+          path: hottake/{id}
           method: delete
           request: 
             parameters: 
@@ -71,12 +70,16 @@ functions:
     handler: handler.getRandomTake
     description: gets a random hottake from dynamodb:hottakeTable
     events:
-      - http: get hottake/random
+      - http:
+          path: hottake/random
+          method: get
   submitHottake:
     handler: handler.submitHottake
     description: Adds user submited hottake to the hottake collection
     events:
-      - http: post hottake/newtake
+      - http:
+          path: hottake/newtake
+          method: post
 #    Define function environment variables here
 #    environment:
 #      variable2: value2
@@ -91,22 +94,6 @@ resources:
           - AttributeName: origin_id
             AttributeType: S
           - AttributeName: uuid
-            AttributeType: S
-          - AttributeName: score
-            AttributeType: N
-          - AttributeName: created_at
-            AttributeType: S
-          - AttributeName: ups
-            AttributeType: N
-          - AttributeName: downs
-            AttributeType: N
-          - AttributeName: origin
-            AttributeType: S
-          - AttributeName: text
-            AttributeType: S
-          - AttributeName: name
-            AttributeType: S
-          - AttributeName: user_id
             AttributeType: S
         KeySchema:
           - AttributeName: origin_id
