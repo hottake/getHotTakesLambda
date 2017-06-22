@@ -1,6 +1,9 @@
 'use strict';
 if(process.env.NODE_ENV === 'dev') require('dotenv').config();
 
+const AWS = require('aws-sdk'),
+      Dynamo = new AWS.DynamoDB(),
+      uuidv1 = require('uuid/v1')
 module.exports.getTwitterHottakes = (event, context, callback) => {
    const Twit = require('twit');
    let t = new Twit({
@@ -10,10 +13,9 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
     access_token_secret:  process.env.access_token_secret,
     timeout_ms:           10*1000,
   }), searchParams, yesterday;
-
   // set the yesterday variable
   yesterday = new Date();
-  yesterday = yesterday.setDate(yesterday.getDate() - 1); 
+  yesterday.setDate(yesterday.getDate() - 1); 
 
   searchParams = {
     q: `hottake -filter:retweets  since:${yesterday.getYear()-yesterday.getMonth()-yesterday.getDate()}`,
@@ -22,7 +24,7 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
     include_rts: false
   }
 
-  t.get('search/tweets', searchParams, (err, data, callback) => {
+  t.get('search/tweets', searchParams, (err, data) => {
       let batchWriteDynamo = data.statuses.map( data => {
         let { created_at, id, text, user } = data,
         uuid = uuidv1();
@@ -34,13 +36,13 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
                 S: uuid
                },
                "origin_id": {
-                 S: id
+                 S: id.toString()
                }, 
                "created_at": {
                  S: created_at
                }, 
                "user_id": {
-                 S: user.id
+                 S: user.id.toString()
                },
                "name": {
                  S: user.screen_name
@@ -65,9 +67,10 @@ module.exports.getTwitterHottakes = (event, context, callback) => {
         }
       }), response = {};
 
-      Dynamo.BatchWriteItem({ RequestItems: { "HottakesTable": batchWriteDynamo } }, (err, data) => {
+      Dynamo.batchWriteItem({ RequestItems: { "hottakeTable": batchWriteDynamo } }, (err, data) => {
         if(err){
-          callback(new Error('[400] Bad Request'))
+          console.log(err)
+          callback(new Error('[400] Bad Request', err))
         } 
         else{
           response.statusCode = 200

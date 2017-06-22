@@ -31,7 +31,7 @@ functions:
       - http:
           path: hottake/new
           method: get
-    enviorment:
+    environment:
       access_token: ${file(./serverless.env.yml):${opt:stage}.access_token}
       consumer_key: ${file(./serverless.env.yml):${opt:stage}.consumer_key}
       consumer_secret: ${file(./serverless.env.yml):${opt:stage}.consumer_secret}
