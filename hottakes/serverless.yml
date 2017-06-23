@@ -83,9 +83,6 @@ functions:
       - http:
           path: hottake/newtake
           method: post
-#    Define function environment variables here
-#    environment:
-#      variable2: value2
 
 resources:
   Resources:
@@ -94,15 +91,11 @@ resources:
       Properties:
         TableName: hottakeTable
         AttributeDefinitions:
-          - AttributeName: origin_id
-            AttributeType: S
           - AttributeName: uuid
             AttributeType: S
         KeySchema:
-          - AttributeName: origin_id
-            KeyType: HASH
           - AttributeName: uuid
-            KeyType: RANGE
+            KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

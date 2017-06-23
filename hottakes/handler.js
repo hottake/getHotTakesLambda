@@ -93,7 +93,7 @@ module.exports.voteUp = (event, context, callback) => {
         N: "1"
       }
     },
-    TableName: "HottakesTable",
+    TableName: "hottakeTable",
     Key: {
       "uuid": {
         S: uuid
@@ -105,6 +105,7 @@ module.exports.voteUp = (event, context, callback) => {
 
   Dynamo.updateItem(params, (err, data) => {
     if(err){
+      console.log(err)
       callback(new Error('[400] Bad Request'))
     }
     else{
@@ -127,7 +128,7 @@ module.exports.voteDown = (event, context, callback) => {
         N: "-1"
       }
     },
-    TableName: "HottakesTable",
+    TableName: "hottakeTable",
     Key: {
       "uuid": {
         S: uuid
